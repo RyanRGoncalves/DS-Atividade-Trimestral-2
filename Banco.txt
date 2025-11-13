@@ -1,0 +1,34 @@
+-- Just watch me, moving far away
+-- Nobody even knows my name, and
+-- No one suspects that I'm not fine, and
+-- Nobody outs behavial Frankestein.
+
+-- Just look at Vicktor in L.A,
+-- And Sid in the Y at U of A
+-- And all the majors at the lab
+-- Reboot as soon as I am able,
+
+-- Every other day I'm wondering,
+-- What's a human being got to be like?
+-- What's a way to just be competent?
+-- These sweet instincts, ruin my life.
+
+-- Every other day I'm wondering,
+-- Was it a mistake to try and define?
+-- What I'm certain's mad incompetence?
+-- These sweet insticts, ruin my life.
+
+-- "Imposter Syndrome" - Sidney Gish
+
+DROP DATABASE filadhospital;
+CREATE DATABASE IF NOT EXISTS filadhospital;
+USE DATABASE filadhospital;
+
+CREATE TABLE IF NOT EXISTS paciente(
+	id_paciente INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+	idade_paciente INT NOT NULL ,
+	nome_paciente VARCHAR(100) NOT NULL UNIQUE KEY,
+	estado_paciente VARCHAR(1) NOT NULL
+);
+
+
