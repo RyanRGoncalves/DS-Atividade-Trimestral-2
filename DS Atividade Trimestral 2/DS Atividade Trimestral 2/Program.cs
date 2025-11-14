@@ -22,6 +22,7 @@ namespace DS_Atividade_Trimestral_2
         }
         static void AlterarPagina(int numeropagina, string texto = null)
         {
+            Console.Clear();
             if (texto != null)
             {
                 Console.WriteLine(texto+"\n");
@@ -29,16 +30,43 @@ namespace DS_Atividade_Trimestral_2
             switch (numeropagina)
             {
                 case 0:
-                    MenuPagina();
+                    PaginaMenu();
+                    break;
+                case 1:
+                    PaginaAdicionar();
+                    break;
+                case 5:
+                    PaginaSaida();
                     break;
             }
         }
-        static void MenuPagina()
+        static void PaginaMenu()
         {
             Console.WriteLine("-----    Menu   -----");
             Console.WriteLine("Escolha o que deseja fazer:");
             Console.WriteLine("1. Adicionar um paciente\n2. Visualizar todos os pacientes\n3. Atualizar os dados de um paciente\n4. Remover um paciente\n5/Q. Sair");
+            string answer = Console.ReadLine();
+            if (int.TryParse(answer, out int page) && page > 0 && page < 6)
+            {
+                AlterarPagina(page);
+            }
+            else if (answer.ToUpper() == "Q")
+            {
+                AlterarPagina(5);
+            }
+            else
+            {
+                AlterarPagina(0, "Opção invalida.");
+            }
+        }
+        static void PaginaAdicionar()
+        {
             
+        }
+        static void PaginaSaida()
+        {
+            Console.WriteLine("Obrigado por utilizar a fila de hospital virtual! Aperte qualquer botão para que o aplicativo se feche.\n\t\t\t- Ryan \"BlankH\" Goncalves");
+            Console.ReadKey();
         }
     }
 }
