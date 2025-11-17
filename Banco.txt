@@ -20,9 +20,8 @@
 
 -- "Imposter Syndrome" - Sidney Gish
 
-DROP DATABASE filadhospital;
 CREATE DATABASE IF NOT EXISTS filadhospital;
-USE DATABASE filadhospital;
+USE filadhospital;
 
 CREATE TABLE IF NOT EXISTS paciente(
 	id_paciente INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
