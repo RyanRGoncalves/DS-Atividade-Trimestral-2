@@ -171,6 +171,36 @@ namespace DS_Atividade_Trimestral_2
                     Console.WriteLine($"{paciente.id} - {paciente.nome}");
                 }
             }
+
+            string resposta = Console.ReadLine();
+
+            if (int.TryParse(resposta, out int id) && id > 0 && id < 16)
+            {
+                Console.Clear();
+                Console.WriteLine("-----    Alterar    -----");
+                Console.WriteLine("Você está atualmente visualizando um paciente em especifico.\nDigite o nome do campo que deseja alterar-lo.\n");
+
+                MySqlDataReader rdr = new MySqlCommand($"SELECT nome_paciente, idade_paciente, estado_paciente FROM paciente WHERE id_paciente = {resposta};", connection).ExecuteReader();
+                rdr.Read();
+
+                Console.WriteLine("Campo: dado\n");
+                Console.WriteLine($"Nome: {rdr[0]}\nIdade: {rdr[1]}\nEstado: {rdr[2]}");
+                
+                resposta = Console.ReadLine().ToUpper();
+
+                if (resposta == "NOME" || resposta == "IDADE" || resposta == "ESTADO")
+                {
+
+                }
+            }
+            else if (resposta == "0")
+            {
+                AlterarPagina(0, "Nenhum paciente alterado.");
+            }
+            else
+            {
+                AlterarPagina(3, "Este valor é invalido.");
+            }
         }
         static void PaginaSaida()
         {
