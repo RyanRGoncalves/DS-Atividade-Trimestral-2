@@ -1,18 +1,33 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DS_Atividade_Trimestral_2
 {
     class Paciente
     {
-        private int id;
+        public int id;
         public int idade;
         public string nome;
         public string estado;
+        public int preferencial;
 
+        public Paciente()
+        {
+
+        }
+        public void CalcularPreferencial()
+        {
+            this.preferencial = 0;
+            this.preferencial += idade <= 8 ? 1 : idade >= 50 ? 2 : 0;
+            this.preferencial += estado == "M" ? 20 : estado == "G" ? 50 : 0;
+            // this.preferencial += nome.Contains("Ryan") ? 1000 : 0;
+        }
+        public Paciente(int id, int idade, string nome, string estado)
+        {
+            this.id = id;
+            this.idade = idade;
+            this.nome = nome;
+            this.estado = estado;
+        }
         public void SolicitarNome()
         {
             Console.WriteLine("Digite o nome do paciente:");
@@ -20,13 +35,13 @@ namespace DS_Atividade_Trimestral_2
         }
         public void SolicitarEstado()
         {
-            Console.WriteLine("Digite o estado físico do paciente(\"B\" para baixo, \"M\" para medio e \"S\" para severo):");
+            Console.WriteLine("Digite o estado físico do paciente(\"B\" para baixo, \"M\" para medio e \"G\" para severo):");
             string estado = Console.ReadLine().ToUpper();
-            for (int tentativas = 1; !(estado == "B" || estado == "M" || estado == "S");tentativas++)
+            for (int tentativas = 1; !(estado == "B" || estado == "M" || estado == "G");tentativas++)
             {
                 if (!(tentativas%3 == 0))
                 {
-                    Console.WriteLine("Não foi dado um valor solicitado. Os possivels valores são \"B\" para baixo, \"M\" para medio e \"S\" para baixo. Tente novamente:");
+                    Console.WriteLine("Não foi dado um valor solicitado. Os possivels valores são \"B\" para baixo, \"M\" para medio e \"G\" para baixo. Tente novamente:");
                     estado = Console.ReadLine().ToUpper();
                 }
                 else
@@ -35,7 +50,7 @@ namespace DS_Atividade_Trimestral_2
                     estado = Console.ReadLine();
                     if (estado == "1")
                     {
-                        Console.WriteLine("Então digite um valor conforme solicitado. \"B\", \"M\" ou \"S\".");
+                        Console.WriteLine("Então digite um valor conforme solicitado. \"B\", \"M\" ou \"G\".");
                         estado = Console.ReadLine().ToUpper();
                     }
                     else
