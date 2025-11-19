@@ -85,15 +85,23 @@ namespace DS_Atividade_Trimestral_2
             {
                 Paciente novopaciente = new Paciente();
                 Console.WriteLine("-----    Adicionar    -----");
-                novopaciente.SolicitarNome();
+                novopaciente.nome = Paciente.SolicitarNome();
 
                 Console.Clear();
                 Console.WriteLine("-----    Adicionar    -----");
-                novopaciente.SolicitarIdade();
+                novopaciente.idade = Paciente.SolicitarIdade();
+                if (novopaciente.idade == -1)
+                {
+                    AlterarPagina(0, "Nenhum paciente adicionado.");
+                }
 
                 Console.Clear();
                 Console.WriteLine("-----    Adicionar    -----");
-                novopaciente.SolicitarEstado();
+                novopaciente.estado = Paciente.SolicitarEstado();
+                if (novopaciente.estado == "invalido")
+                {
+                    AlterarPagina(0, "Nenhum paciente adicionado.");
+                }
 
                 try
                 {
@@ -118,42 +126,51 @@ namespace DS_Atividade_Trimestral_2
         static void PaginaVisualizar()
         {
             Console.WriteLine("-----    Visualizar    -----");
-            Console.WriteLine("Aqui está a lista de todos os pacientes na fila, em ordem dependendo de 1. quando entraram, 2. sua idade e 3. seu estado físico atual\n");
+            Console.WriteLine("Aqui está a lista de todos os pacientes na fila\nEm ordem dependendo de seu preferencial.");
             Paciente[] pacientes = RetornarPacientes();
-
-            foreach (Paciente paciente in pacientes)
+            if (pacientes[0] != null)
             {
-                if (paciente != null)
-                {
-                    paciente.CalcularPreferencial();
-                }
-            }
+                Console.WriteLine("Tem {} de pessoas dentro da fila.");
 
-            for (int i = pacientes.Length-1; i >= 0; i--)
-            {
-                if (pacientes[i] == null)
+                foreach (Paciente paciente in pacientes)
                 {
-                    continue;
-                }
-                for (int j = 0; j < i; j++)
-                {
-                    if (pacientes[j].preferencial < pacientes[i].preferencial)
+                    if (paciente != null)
                     {
-                        Paciente aux = pacientes[i];
-                        pacientes[i] = pacientes[j];
-                        pacientes[j] = aux;
+                        paciente.CalcularPreferencial();
+                    }
+                }
+
+                for (int i = pacientes.Length - 1; i >= 0; i--)
+                {
+                    if (pacientes[i] == null)
+                    {
+                        continue;
+                    }
+                    for (int j = 0; j < i; j++)
+                    {
+                        if (pacientes[j].preferencial < pacientes[i].preferencial)
+                        {
+                            Paciente aux = pacientes[i];
+                            pacientes[i] = pacientes[j];
+                            pacientes[j] = aux;
+                        }
+                    }
+                }
+
+                Console.WriteLine("\nNome - Idade - Estado - Nº Preferencial\n");
+                foreach (Paciente paciente in pacientes)
+                {
+                    if (paciente != null)
+                    {
+                        Console.WriteLine($"{paciente.nome} - {paciente.idade} - {paciente.estado} - {paciente.preferencial}");
                     }
                 }
             }
-
-            Console.WriteLine("Nome - Idade - Estado - Nº Preferencial\n");
-            foreach (Paciente paciente in pacientes)
+            else
             {
-                if (paciente != null)
-                {
-                    Console.WriteLine($"{paciente.nome} - {paciente.idade} - {paciente.estado} - {paciente.preferencial}");
-                }
+                Console.WriteLine("\nNão há nenhum paciente atualmente, adicione um paciente antes de continuar.");
             }
+
             Console.WriteLine("\nDigite qualquer tecla para voltar ao menu.");
             Console.ReadKey();
             AlterarPagina(0);
@@ -185,12 +202,30 @@ namespace DS_Atividade_Trimestral_2
 
                 Console.WriteLine("Campo: dado\n");
                 Console.WriteLine($"Nome: {rdr[0]}\nIdade: {rdr[1]}\nEstado: {rdr[2]}");
-                
+                rdr.Close();
                 resposta = Console.ReadLine().ToUpper();
 
                 if (resposta == "NOME" || resposta == "IDADE" || resposta == "ESTADO")
                 {
-
+                    if (resposta == "NOME")
+                    {
+                        string novonome = Paciente.SolicitarNome();
+                        new MySqlCommand($"UPDATE paciente SET nome_paciente = \"{novonome}\" WHERE id_paciente = {id}").ExecuteNonQuery();
+                    }
+                    else if (resposta == "IDADE")
+                    {
+                        int novaidade = Paciente.SolicitarIdade();
+                        new MySqlCommand($"UPDATE paciente SET nome_paciente = \"{novaidade}\" WHERE id_paciente = {id}").ExecuteNonQuery();
+                    }
+                    else
+                    {
+                        string novoestado = Paciente.SolicitarEstado();
+                        new MySqlCommand($"UPDATE paciente SET nome_paciente = \"{novoestado}\" WHERE id_paciente = {id}").ExecuteNonQuery();
+                    }
+                }
+                else
+                {
+                    AlterarPagina(3, "Valor invalido!");
                 }
             }
             else if (resposta == "0")

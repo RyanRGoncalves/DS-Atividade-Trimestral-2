@@ -28,12 +28,12 @@ namespace DS_Atividade_Trimestral_2
             this.nome = nome;
             this.estado = estado;
         }
-        public void SolicitarNome()
+        static public string SolicitarNome()
         {
             Console.WriteLine("Digite o nome do paciente:");
-            this.nome = Console.ReadLine();
+            return Console.ReadLine();
         }
-        public void SolicitarEstado()
+        static public string SolicitarEstado()
         {
             Console.WriteLine("Digite o estado físico do paciente(\"B\" para baixo, \"M\" para medio e \"G\" para severo):");
             string estado = Console.ReadLine().ToUpper();
@@ -55,13 +55,13 @@ namespace DS_Atividade_Trimestral_2
                     }
                     else
                     {
-                        Program.AlterarPagina(0, "Nenhum usuario foi adicionado.");
+                        return "invalido";
                     }
                 }
             }
-            this.estado = estado;
+            return estado;
         }
-        public void SolicitarIdade()
+        static public int SolicitarIdade()
         {
             int idade;
             Console.WriteLine("Digite a idade do paciente:");
@@ -84,11 +84,11 @@ namespace DS_Atividade_Trimestral_2
                     }
                     else
                     {
-                        Program.AlterarPagina(0, "Nenhum usuario foi adicionado.");
+                        return -1;
                     }
                 }
             }
-            this.idade = idade;
+            return idade;
         }
     }
 }
