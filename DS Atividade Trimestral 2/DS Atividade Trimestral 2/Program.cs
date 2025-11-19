@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.Eventing.Reader;
 using MySql.Data.MySqlClient;
 
 namespace DS_Atividade_Trimestral_2
@@ -54,6 +55,9 @@ namespace DS_Atividade_Trimestral_2
                     break;
                 case 3:
                     PaginaAlterar();
+                    break;
+                case 4:
+                    PaginaRemover();
                     break;
                 case 5:
                     PaginaSaida();
@@ -130,7 +134,7 @@ namespace DS_Atividade_Trimestral_2
             Paciente[] pacientes = RetornarPacientes();
             if (pacientes[0] != null)
             {
-                Console.WriteLine("Tem {} de pessoas dentro da fila.");
+                Console.WriteLine($"Há {new MySqlCommand("SELECT count(*) FROM paciente;", connection).ExecuteScalar()} pessoa(s) dentro da fila.");
 
                 foreach (Paciente paciente in pacientes)
                 {
@@ -157,12 +161,12 @@ namespace DS_Atividade_Trimestral_2
                     }
                 }
 
-                Console.WriteLine("\nNome - Idade - Estado - Nº Preferencial\n");
-                foreach (Paciente paciente in pacientes)
+                Console.WriteLine("\nNº na fila - Nome - Idade - Estado - Nº Preferencial\n");
+                for (int i=0; i < pacientes.Length; i++)
                 {
-                    if (paciente != null)
+                    if (pacientes[i] != null)
                     {
-                        Console.WriteLine($"{paciente.nome} - {paciente.idade} - {paciente.estado} - {paciente.preferencial}");
+                        Console.WriteLine($"{i+1} - {pacientes[i].nome} - {pacientes[i].idade} - {pacientes[i].estado} - {pacientes[i].preferencial}");
                     }
                 }
             }
@@ -191,11 +195,11 @@ namespace DS_Atividade_Trimestral_2
 
             string resposta = Console.ReadLine();
 
-            if (int.TryParse(resposta, out int id) && id > 0 && id < 16)
+            if (int.TryParse(resposta, out int id) && id > 0 && id < 16 && int.Parse(new MySqlCommand($"SELECT COUNT(*) FROM paciente WHERE id_paciente = {id}", connection).ExecuteScalar().ToString()) != 0)
             {
                 Console.Clear();
                 Console.WriteLine("-----    Alterar    -----");
-                Console.WriteLine("Você está atualmente visualizando um paciente em especifico.\nDigite o nome do campo que deseja alterar-lo.\n");
+                Console.WriteLine("Você está atualmente visualizando um paciente em especifico.\nDigite o nome do campo que deseja alterar. Digite 0 para voltar ao menu.\n");
 
                 MySqlDataReader rdr = new MySqlCommand($"SELECT nome_paciente, idade_paciente, estado_paciente FROM paciente WHERE id_paciente = {resposta};", connection).ExecuteReader();
                 rdr.Read();
@@ -207,21 +211,28 @@ namespace DS_Atividade_Trimestral_2
 
                 if (resposta == "NOME" || resposta == "IDADE" || resposta == "ESTADO")
                 {
+                    Console.Clear();
+                    Console.WriteLine("-----    Alterar    -----");
                     if (resposta == "NOME")
                     {
                         string novonome = Paciente.SolicitarNome();
-                        new MySqlCommand($"UPDATE paciente SET nome_paciente = \"{novonome}\" WHERE id_paciente = {id}").ExecuteNonQuery();
+                        new MySqlCommand($"UPDATE paciente SET nome_paciente = \"{novonome}\" WHERE id_paciente = {id}", connection).ExecuteNonQuery();
                     }
                     else if (resposta == "IDADE")
                     {
                         int novaidade = Paciente.SolicitarIdade();
-                        new MySqlCommand($"UPDATE paciente SET nome_paciente = \"{novaidade}\" WHERE id_paciente = {id}").ExecuteNonQuery();
+                        new MySqlCommand($"UPDATE paciente SET nome_paciente = \"{novaidade}\" WHERE id_paciente = {id}", connection).ExecuteNonQuery();
                     }
-                    else
+                    else if (resposta == "ESTADO")
                     {
                         string novoestado = Paciente.SolicitarEstado();
-                        new MySqlCommand($"UPDATE paciente SET nome_paciente = \"{novoestado}\" WHERE id_paciente = {id}").ExecuteNonQuery();
+                        new MySqlCommand($"UPDATE paciente SET nome_paciente = \"{novoestado}\" WHERE id_paciente = {id}", connection).ExecuteNonQuery();
                     }
+                    AlterarPagina(0, "Paciente alterado com sucesso.");
+                }
+                else if (resposta == "0")
+                {
+                    AlterarPagina(0, "Paciente não foi alterado.");
                 }
                 else
                 {
@@ -235,6 +246,53 @@ namespace DS_Atividade_Trimestral_2
             else
             {
                 AlterarPagina(3, "Este valor é invalido.");
+            }
+        }
+        static void PaginaRemover()
+        {
+            Console.WriteLine("-----    Remover    -----");
+            Console.WriteLine("Está pagina´é utilizada para remover um usuario.\nDigite o ID do usuario para remover-lo, digite 0 para voltar ao menu.\n");
+
+            Console.WriteLine("ID - Nome\n");
+            Paciente[] pacientes = RetornarPacientes();
+            foreach (Paciente paciente in pacientes)
+            {
+                if (paciente != null)
+                {
+                    Console.WriteLine($"{paciente.id} - {paciente.nome}");
+                }
+            }
+
+            string resposta = Console.ReadLine();
+
+            if (int.TryParse(resposta, out int id) && id > 0 && id < 16 && int.Parse(new MySqlCommand($"SELECT COUNT(*) FROM paciente WHERE id_paciente = {id}", connection).ExecuteScalar().ToString()) != 0)
+            {
+                Console.Clear();
+                Console.WriteLine("-----    Remover    -----");
+                Console.WriteLine("Você tem certeza que deseja remover o paciente selecionado?\nPressione 1 para sim, 0 para não.");
+
+                resposta = Console.ReadLine();
+                if (resposta == "0")
+                {
+                    AlterarPagina(0, "Nenhum paciente foi removido");
+                }
+                else if (resposta == "1")
+                {
+                    new MySqlCommand($"DELETE FROM paciente WHERE id_paciente = {id}", connection).ExecuteScalar();
+                    AlterarPagina(0, "O paciente selecionado foi removido.");
+                }
+                else
+                {
+                    AlterarPagina(4, "Valor invalido.");
+                }
+            }
+            else if (resposta == "0")
+            {
+                AlterarPagina(0, "Nenhum paciente foi removido.");
+            }
+            else
+            {
+                AlterarPagina(4, "Este valor é invalido.");
             }
         }
         static void PaginaSaida()
